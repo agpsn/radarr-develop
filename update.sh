@@ -5,20 +5,15 @@ echo $(cat ~/.ghcr-token) | docker login ghcr.io -u $(cat ~/.ghcr-user) --passwo
 
 	GBRANCH=$(git branch | grep "*" | rev | cut -f1 -d" " | rev)
 	RVERSION=$(curl -sL "https://radarr.servarr.com/v1/update/master/changes?runtime=netcore&os=linuxmusl" | jq -r '.[0].version')
-	DVERSION=$(curl -sL "https://radarr.servarr.com/v1/update/develop/changes?runtime=netcore&os=linuxmusl" | jq -r '.[0].version')
 
-#BUILD/PUSH v3
-	echo "Building and Pushing 'ghcr.io/agpsn/docker-radarr:$RVERSION'"
-	docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/docker-radarr:latest --tag ghcr.io/agpsn/docker-radarr:$RVERSION -f ./Dockerfile.v4 .
-	docker push --quiet ghcr.io/agpsn/docker-radarr:latest; docker push --quiet ghcr.io/agpsn/docker-radarr:$RVERSION && docker image rm -f ghcr.io/agpsn/docker-radarr:$RVERSION
-	git tag $RVERSION && git push origin $RVERSION --tags
-	echo ""
+if [ $GBRANCH != "develop" ]; then git checkout develop; fi
 
 #BUILD/PUSH v4
-	echo "Building and Pushing 'ghcr.io/agpsn/docker-radarr:$DVERSION'"
-	docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/docker-radarr:develop --tag ghcr.io/agpsn/docker-radarr:$DVERSION  -f ./Dockerfile.v5 .
-	docker push --quiet ghcr.io/agpsn/docker-radarr:develop; docker push --quiet ghcr.io/agpsn/docker-radarr:$DVERSION && docker image rm -f ghcr.io/agpsn/docker-radarr:$DVERSION
+	echo "Building and Pushing 'ghcr.io/agpsn/docker-radarr:$RVERSION'"
+	docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/docker-radarr:master --tag ghcr.io/agpsn/docker-radarr:$RVERSION -f ./Dockerfile.develop .
+	docker push --quiet ghcr.io/agpsn/docker-radarr:master; docker push --quiet ghcr.io/agpsn/docker-radarr:$RVERSION && docker image rm -f ghcr.io/agpsn/docker-radarr:$RVERSION
+	git tag $RVERSION && git push origin $RVERSION -f --tags
 	echo ""
 
-#SOURCE v4/v5
+#SOURCE v4
 	git add . && git commit -m "Updated" && git push --quiet
