@@ -12,7 +12,7 @@ if [ $GBRANCH != "develop" ]; then git checkout develop; fi
 	echo "Building and Pushing 'ghcr.io/agpsn/docker-radarr:$RVERSION'"
 	docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/docker-radarr:develop --tag ghcr.io/agpsn/docker-radarr:$RVERSION -f ./Dockerfile.develop .
 	docker push --quiet ghcr.io/agpsn/docker-radarr:develop; docker push --quiet ghcr.io/agpsn/docker-radarr:$RVERSION && docker image rm -f ghcr.io/agpsn/docker-radarr:$RVERSION
-	git tag $RVERSION && git push origin $RVERSION -f --tags
+	git tag -f $RVERSION && git push origin $RVERSION -f --tags
 	echo ""
 
 #SOURCE v4
