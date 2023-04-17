@@ -1,5 +1,5 @@
 #!/bin/bash
-clear; set -eu
+set -eu
 
 echo $(cat ~/.ghcr-token) | docker login ghcr.io -u $(cat ~/.ghcr-user) --password-stdin &>/dev/null
 GBRANCH=$(git branch | grep "*" | rev | cut -f1 -d" " | rev)
