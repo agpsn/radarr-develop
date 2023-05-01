@@ -1,5 +1,5 @@
 #!/bin/bash
-clear; set -eu
+set -eu
 
 [ ! -d "/mnt/user/system/agpsn-github/radarr-develop" ] && echo "No repo!" && exit 1
 cd "/mnt/user/system/agpsn-github/radarr-develop"
@@ -13,3 +13,4 @@ docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/docker-radarr:develop -
 docker push --quiet ghcr.io/agpsn/docker-radarr:develop; docker push --quiet ghcr.io/agpsn/docker-radarr:$RVERSION && docker image rm -f ghcr.io/agpsn/docker-radarr:$RVERSION
 git tag -f $RVERSION && git push --quiet origin $RVERSION -f --tags
 git add . && git commit -m "Updated" && git push --quiet
+echo ""
